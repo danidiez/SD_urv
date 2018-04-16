@@ -2,12 +2,13 @@ Map-reduce implementation with Pyactor
 
 This code use a simple map reduce function in distributed system. Allows to split the problem in pieces and solve it with diferent computers with actors. This code is implemented as a framework. You can use your own function map-reduce following a standard code implementation:
 
-  file:
-  class Joiner(object):
-      def start(nActors):
-    
-  class Actor(object):
-      def start(textFragment, Joiner, ip):
+      function.py:
+      class Joiner(object):
+         def start(nActors):
+         ...
+      class Actor(object):
+         def start(textFragment, Joiner, ip):
+         ...
     
 The class actor will be used to be spawned in a empty host. This class will make all the distributed work in a diferent computers.
 The class Joiner will be spawned in the master. It will be used to join all the results of the mappers inside the master computer.
@@ -21,7 +22,9 @@ The class Joiner will be spawned in the master. It will be used to join all the 
  5. Introduce the name of the file in the master console.
   *If the last step worked you will be noticed in the console with the registry of the hosts joined.
  6. Wait for the result of the execution and DONE!
-    
+ *Optional: to spawn actors in a different computer, execute spawner.py with your own public ip and the public ip of the master.
+            You can use 'ip a' or 'ifconfig' to check your local ip. Otherwise, use the local ip 127.0.0.1/24
+  
  EXAMPLE:
  
         cd Desktop/sd/
