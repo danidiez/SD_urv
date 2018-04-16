@@ -42,5 +42,4 @@ The class Joiner will be spawned in the master. It will be used to join all the 
         */
 
 
-Autors: Daniel Díez Sánchez
-        Raúl Almenara Peñaranda
+Autors: Daniel Díez Sánchez & Raúl Almenara Peñaranda
