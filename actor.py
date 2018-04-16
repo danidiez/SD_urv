@@ -8,7 +8,7 @@ if __name__ == "__main__":
 	nameHost = 'http://%s' % ip_port
     	host = create_host(nameHost)
 	regisIp = 'http://%s/regis' % ip_portR
-	registry = host.lookup_url(regisIp, 'Registry','mapreduce')
+	registry = host.lookup_url(regisIp, 'Registry','master')
 	registry.bind(host)
 
 	serve_forever()

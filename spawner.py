@@ -7,10 +7,9 @@ if __name__ == "__main__":
 	ip_portR= sys.argv[2]
 	n =int(sys.argv[3])
 	port = 6000
-	spawner= 
 	for i in range(n):
-		port+=1
+		port+= 1
 		ip_port="%s:%s" % (ip,port)
-		command = "python actor.py %s %s %s &" % (ip_port,ip_portR, i)
+		command = "python actor.py %s %s &" % (ip_port,ip_portR)
 		os.system(command)
 

@@ -1,21 +1,19 @@
+from pyactor.context import set_context, create_host, Host, sleep, shutdown, serve_forever
+from time import time
+import collections, re, urllib, os, commands, sys
 
 #Reducer: This class joins the result of the mappers into a single dictionary and orders it alphabetically
 class Joiner(object):
-	_tell = ['initialize','send','result','syncEnd','syncStart']
+	_tell = ['start','send','result','syncEnd','syncStart']
 	_ask = []
-	_ref = ['initialize','send','syncEnd']
+	_ref = ['start','send','syncEnd']
 
 	#Reducer.initialize: initializes the necessary parameters for the reducer class
 		#-maps: number of mappers created.
-	def initialize(self ,maps):
-		self.tmpCW = 0
-		self.contMaps = maps
-		self.contMaps2 = maps-1
-		self.maps = maps
-		self.totalWords = 0
-		self.sync = 0
-		self.sync2 = 0
+	def start(self ,maps):
+		self.timer = time()
 		self.dictionary = {}
+		self.contMaps = maps
 	
 	#Reducer.send: this function adds a dictionary from a mapper to the reducer's dictionary, reduces by 1 the counter of how many dictionaries 		are left to be received and calls the result() function when no more dictionaries are expected
 		#-mapDictionary: a dictionary created by a mapper from a fragment of the total text
@@ -28,32 +26,12 @@ class Joiner(object):
 		if self.contMaps == 0:
 			self.result()
 	
-	#Reducer.syncStart: when the fisrt mapper starts counting words the timer to know how much time countWords takes is initiliazed 
-	def syncStart(self):
-		if self.sync == 0:
-			self.startT = time()
-			self.sync = 1
-	
-	#Reducer.syncEnd: when the fist mapper is going to start mapping, a second timer is initialized to measure the time the mapReduce takes, 		also, each time this function is called the total number of words is updated 
-		#-nWords: indicates the number of words the current mapper has read
-	def syncEnd(self, nWords):
-		if self.sync2 == 0:
-			self.startT2 = time()
-			self.sync2 = 1 
-		if self.contMaps2 > 0:
-			self.contMaps2 -= 1
-			self.totalWords = self.totalWords + nWords
-		else:
-			self.totalWords = self.totalWords + nWords
-			self.tmpCW= time()-self.startT
-	
 	#Reducer.result: this function orders the reducer's dictionary and prints it, calculates the total time the countWords and mapReduce has 		taken and prints them and kills all processes from previous mappers
 	def result(self):
 		resultado = collections.OrderedDict(sorted(self.dictionary.items()))
-		tmpMR = time() - self.startT2
-		totalT = time() - self.startT
+		totalT = time() - self.timer
 		print resultado
-		print"\nwords: %s\nCountWords: %s\nMapReduce: %s\nTotal: %s" % (self.totalWords,self.tmpCW, tmpMR, totalT)
+		print"\nElapsed time: %s" % totalT
 		sleep(1)
 		os.system("kill -9 $(ps -a|grep python|cut -f2 -d"+"'"+" "+"')")
 	
@@ -73,7 +51,6 @@ class Actor(object):
 		self.reducer = reducer
 		os.system("wget 'http://"+ip+":8000/"+self.name+"'")
 		self.reducer=reducer
-		self.reducer.syncStart()
 		self.text =open(self.name,'r').read()
 		self.countWords()
 	
